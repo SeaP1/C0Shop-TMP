@@ -1,0 +1,7 @@
+BEV-001,beverage,Americano,3.50
+BEV-002,beverage,Latte,4.20
+FOOD-001,food,Blueberry Muffin,2.80
+FOOD-002,food,Ham Sandwich,5.50
+FOOD-003,food,Chocolate Cake,4.00
+OTH-001,other,Coffee Mug,8.00
+OTH-002,other,Cookie Box,6.50

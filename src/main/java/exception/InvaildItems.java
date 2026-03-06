@@ -1,4 +1,4 @@
-package main.java.exception;
+package exception;
 
 public class InvaildItems extends Exception {
     public InvaildItems(String message) {

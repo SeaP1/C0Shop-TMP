@@ -1,15 +1,22 @@
-package main.java.utils;
-import main.java.pojo.MenuItem;
-import main.java.exception.InvaildItems;
+package utils;
+import exception.InvaildItems;
+import pojo.MenuItem;
+import pojo.Orders;
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class LoadUtils {
     public static Map<String, MenuItem> ldMenu(String path) {
         Map<String, MenuItem> menuMap = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+        InputStream inputStream = LoadUtils.class.getClassLoader().getResourceAsStream(path);
+        if (inputStream == null) {
+            throw new RuntimeException("Cannot find resource file: " + path);
+        }
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
             String line;
             while ((line = br.readLine()) != null) {
+                // 也可以用 if (line.trim().isEmpty()) continue; 直接跳
                 try {
                     String[] parts = line.split(",");
                     if (parts.length != 4) continue;
@@ -19,13 +26,39 @@ public class LoadUtils {
                     double cost = Double.parseDouble(parts[3].trim());
                     MenuItem item = new MenuItem(id, describe, cost, category);
                     menuMap.put(id, item);
-                } catch (InvaildItems | NumberFormatException e) { //debugs
-                    System.err.println("0Ops Lines: " + line + " -> " + e.getMessage());
+                } catch (InvaildItems | NumberFormatException e) {
+                    System.err.println("0ops and skip line: " + line + " -> " + e.getMessage());
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return menuMap;
+    }
+
+    public static List<Orders> ldOrders(String fileName) {
+        List<Orders> orders = new ArrayList<>();
+        InputStream inputStream = LoadUtils.class.getClassLoader().getResourceAsStream(fileName);
+        if (inputStream == null) {
+            throw new RuntimeException("Nor: " + fileName);
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                String timestampStr = parts[0].trim();
+                String customerId = parts[1].trim();
+                String itemId = parts[2].trim();
+                LocalDateTime timestamp = LocalDateTime.parse(timestampStr);
+                Orders order = new Orders(customerId, timestamp, itemId);
+                orders.add(order);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading orders file", e);
+        }
+
+        return orders;
     }
 }
