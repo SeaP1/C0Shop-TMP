@@ -1,8 +1,0 @@
-menu与orders的内容可以自定义, 作为测试
-
-此外, 包例如
-package main.java.Guis;
-需要改成package Guis
-但不影响
-
-⬆ 已修改
