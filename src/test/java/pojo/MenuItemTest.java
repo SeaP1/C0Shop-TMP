@@ -1,21 +1,44 @@
-package test.java.pojo;
-import main.java.exception.InvaildItems;
-import main.java.pojo.MenuItem;
+package pojo;
+
+import exception.InvaildItems;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-// 用的是Junit5, 但我不确定有没有指定版本
 public class MenuItemTest {
+
     @Test
-    void testValidMenu() {
+    public void validMenuItemShouldBeCreated() {
         assertDoesNotThrow(() -> {
-            new MenuItem("Ababa", "Coffee", 3.50, "BEVERAGES");
+            MenuItem item = new MenuItem("BEV-001", "Americano", 3.50, "beverage");
+            assertEquals("BEV-001", item.getId());
+            assertEquals("Americano", item.getDescribe());
+            assertEquals(3.50, item.getCost());
+            assertEquals("beverage", item.getCategory());
         });
     }
+
     @Test
-    void testInvalidId() {
-        assertThrows(InvaildItems.class, () -> {
-            new MenuItem("Invvvvvvalid", "Tea", 2.00, "BEVERAGES");
-        });
+    public void invalidIdShouldThrowException() {
+        assertThrows(InvaildItems.class, () ->
+                new MenuItem("Ababa", "Americano", 3.50, "beverage"));
+    }
+
+    @Test
+    public void invalidCategoryShouldThrowException() {
+        assertThrows(InvaildItems.class, () ->
+                new MenuItem("BEV-001", "Americano", 3.50, "drink"));
+    }
+
+    @Test
+    public void emptyDescriptionShouldThrowException() {
+        assertThrows(InvaildItems.class, () ->
+                new MenuItem("BEV-001", "   ", 3.50, "beverage"));
+    }
+
+    @Test
+    public void nonPositiveCostShouldThrowException() {
+        assertThrows(InvaildItems.class, () ->
+                new MenuItem("BEV-001", "Americano", 0, "beverage"));
     }
 }
