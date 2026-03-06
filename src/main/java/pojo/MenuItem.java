@@ -1,0 +1,48 @@
+package main.java.pojo;
+import main.java.exception.InvaildItems;
+
+/*
+如果能用lombok的话，应该就不用写get/set方法了其实
+直接@Data就行了
+ */
+
+public class MenuItem {
+    private String id;
+    private String describe;
+    private double cost;
+    private String category;
+
+    public MenuItem(String id, String describe, double cost, String category) throws InvaildItems {
+        if (!id.matches("[A-Z]+-\\d{3}")) { //正则
+            throw new InvaildItems("Invaild: " + id);
+        }
+        this.id = id;
+        this.describe = describe;
+        this.cost = cost;
+        this.category = category;
+    }
+
+    // <CATEGORY>-XXX 计划的是<food> 食物 -￡3.5
+    // 但PDF是<CATEGORY>-XXX 后接三个数字, 不是很确定
+    @Override
+    public String toString() {
+        return String.format("[%s] %s - £%.2f", category, describe, cost);
+    }
+
+    // 或许Enum更好?
+    public String getCategory() {
+        return this.category;
+    }
+
+    public double getCost() {
+        return this.cost;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public String getDescribe() {
+        return this.describe;
+    }
+}
