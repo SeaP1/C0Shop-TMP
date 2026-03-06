@@ -1,0 +1,64 @@
+package utils;
+import exception.InvaildItems;
+import pojo.MenuItem;
+import pojo.Orders;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.util.*;
+
+public class LoadUtils {
+    public static Map<String, MenuItem> ldMenu(String path) {
+        Map<String, MenuItem> menuMap = new HashMap<>();
+        InputStream inputStream = LoadUtils.class.getClassLoader().getResourceAsStream(path);
+        if (inputStream == null) {
+            throw new RuntimeException("Cannot find resource file: " + path);
+        }
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                // 也可以用 if (line.trim().isEmpty()) continue; 直接跳
+                try {
+                    String[] parts = line.split(",");
+                    if (parts.length != 4) continue;
+                    String id = parts[0].trim();
+                    String category = parts[1].trim();
+                    String describe = parts[2].trim();
+                    double cost = Double.parseDouble(parts[3].trim());
+                    MenuItem item = new MenuItem(id, describe, cost, category);
+                    menuMap.put(id, item);
+                } catch (InvaildItems | NumberFormatException e) {
+                    System.err.println("0ops and skip line: " + line + " -> " + e.getMessage());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return menuMap;
+    }
+
+    public static List<Orders> ldOrders(String fileName) {
+        List<Orders> orders = new ArrayList<>();
+        InputStream inputStream = LoadUtils.class.getClassLoader().getResourceAsStream(fileName);
+        if (inputStream == null) {
+            throw new RuntimeException("Nor: " + fileName);
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                String timestampStr = parts[0].trim();
+                String customerId = parts[1].trim();
+                String itemId = parts[2].trim();
+                LocalDateTime timestamp = LocalDateTime.parse(timestampStr);
+                Orders order = new Orders(customerId, timestamp, itemId);
+                orders.add(order);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading orders file", e);
+        }
+
+        return orders;
+    }
+}

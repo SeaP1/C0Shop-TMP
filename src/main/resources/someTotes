@@ -6,3 +6,9 @@ package main.java.Guis;
 但不影响
 
 ⬆ 已修改
+
+Ver4
+修改了LoadUtils.java
+修改了Main.java
+新增了Disc...test.java测试
+新增了Load...test.java测试
