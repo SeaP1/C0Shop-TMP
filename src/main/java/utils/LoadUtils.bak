@@ -1,6 +1,6 @@
 package utils;
 
-import exception.InvaildItems;
+import exception.InvalidItems;
 import pojo.MenuItem;
 import pojo.Orders;
 

@@ -1,6 +1,6 @@
 package service;
 
-import exception.InvaildItems;
+import exception.InvalidItems;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pojo.MenuItem;
@@ -19,12 +19,12 @@ public class DiscServiceTest {
         discService = new DiscService();
     }
 
-    private MenuItem item(String id, String desc, double cost, String category) throws InvaildItems {
+    private MenuItem item(String id, String desc, double cost, String category) throws InvalidItems {
         return new MenuItem(id, desc, cost, category);
     }
 
     @Test
-    void testCalculateSubtotal() throws InvaildItems {
+    void testCalculateSubtotal() throws InvalidItems {
         List<MenuItem> items = new ArrayList<>();
         items.add(item("BEV-001", "Tea", 3.0, "beverage"));
         items.add(item("FOOD-001", "Burger", 8.0, "food"));
@@ -36,7 +36,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    void testNoDiscount() throws InvaildItems {
+    void testNoDiscount() throws InvalidItems {
         List<MenuItem> items = new ArrayList<>();
         items.add(item("BEV-001", "Tea", 3.0, "beverage"));
         items.add(item("FOOD-001", "Burger", 8.0, "food"));
@@ -47,7 +47,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    void testOnlyTwentyPercentDiscount() throws InvaildItems {
+    void testOnlyTwentyPercentDiscount() throws InvalidItems {
         List<MenuItem> items = new ArrayList<>();
         items.add(item("BEV-001", "Tea", 4.0, "beverage"));
         items.add(item("FOOD-001", "Burger", 8.0, "food"));
@@ -59,7 +59,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    void testOnlyTwoPoundsDiscount() throws InvaildItems {
+    void testOnlyTwoPoundsDiscount() throws InvalidItems {
         List<MenuItem> items = new ArrayList<>();
         items.add(item("FOOD-001", "Burger", 10.0, "food"));
         items.add(item("FOOD-002", "Pizza", 10.0, "food"));
@@ -71,7 +71,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    void testBothDiscountsApplied() throws InvaildItems {
+    void testBothDiscountsApplied() throws InvalidItems {
         List<MenuItem> items = new ArrayList<>();
         items.add(item("BEV-001", "Tea", 4.0, "beverage"));
         items.add(item("FOOD-001", "Burger", 10.0, "food"));
@@ -84,7 +84,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    void testBoundarySubtotalExactlyTwenty_WithOther() throws InvaildItems {
+    void testBoundarySubtotalExactlyTwenty_WithOther() throws InvalidItems {
         List<MenuItem> items = new ArrayList<>();
         items.add(item("FOOD-001", "Burger", 10.0, "food"));
         items.add(item("OTHER-001", "Napkin", 10.0, "other"));
@@ -95,7 +95,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    void testBoundaryExactlyTwoFoodAndOneBeverage() throws InvaildItems {
+    void testBoundaryExactlyTwoFoodAndOneBeverage() throws InvalidItems {
         List<MenuItem> items = new ArrayList<>();
         items.add(item("BEV-001", "Tea", 2.0, "beverage"));
         items.add(item("FOOD-001", "Burger", 5.0, "food"));
@@ -118,7 +118,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    void testDiscountDescription_NoDiscount() throws InvaildItems {
+    void testDiscountDescription_NoDiscount() throws InvalidItems {
         List<MenuItem> items = new ArrayList<>();
         items.add(item("FOOD-001", "Burger", 8.0, "food"));
 
@@ -128,7 +128,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    void testDiscountDescription_BothDiscounts() throws InvaildItems {
+    void testDiscountDescription_BothDiscounts() throws InvalidItems {
         List<MenuItem> items = new ArrayList<>();
         items.add(item("BEV-001", "Tea", 4.0, "beverage"));
         items.add(item("FOOD-001", "Burger", 10.0, "food"));

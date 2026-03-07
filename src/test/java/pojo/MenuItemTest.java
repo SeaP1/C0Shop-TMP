@@ -1,6 +1,6 @@
 package pojo;
 
-import exception.InvaildItems;
+import exception.InvalidItems;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,25 +20,25 @@ public class MenuItemTest {
 
     @Test
     public void invalidIdShouldThrowException() {
-        assertThrows(InvaildItems.class, () ->
+        assertThrows(InvalidItems.class, () ->
                 new MenuItem("Ababa", "Americano", 3.50, "beverage"));
     }
 
     @Test
     public void invalidCategoryShouldThrowException() {
-        assertThrows(InvaildItems.class, () ->
+        assertThrows(InvalidItems.class, () ->
                 new MenuItem("BEV-001", "Americano", 3.50, "drink"));
     }
 
     @Test
     public void emptyDescriptionShouldThrowException() {
-        assertThrows(InvaildItems.class, () ->
+        assertThrows(InvalidItems.class, () ->
                 new MenuItem("BEV-001", "   ", 3.50, "beverage"));
     }
 
     @Test
     public void nonPositiveCostShouldThrowException() {
-        assertThrows(InvaildItems.class, () ->
+        assertThrows(InvalidItems.class, () ->
                 new MenuItem("BEV-001", "Americano", 0, "beverage"));
     }
 }

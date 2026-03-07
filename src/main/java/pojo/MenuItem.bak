@@ -1,5 +1,5 @@
 package main.java.pojo;
-import main.java.exception.InvaildItems;
+import main.java.exception.InvalidItems;
 
 /*
 如果能用lombok的话，应该就不用写get/set方法了其实

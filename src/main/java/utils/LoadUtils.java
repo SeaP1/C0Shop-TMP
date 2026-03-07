@@ -1,6 +1,6 @@
 package utils;
 
-import exception.InvaildItems;
+import exception.InvalidItems;
 import pojo.MenuItem;
 import pojo.Orders;
 
@@ -85,7 +85,7 @@ public class LoadUtils {
                 MenuItem item = new MenuItem(id, description, cost, category);
                 menu.put(id, item);
 
-            } catch (InvaildItems | NumberFormatException e) {
+            } catch (InvalidItems | NumberFormatException e) {
                 System.out.println("Skipping invalid menu line " + lineNo + ": " + e.getMessage());
             }
         }
