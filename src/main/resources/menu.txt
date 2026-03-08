@@ -5,3 +5,8 @@ FOOD-002,food,Ham Sandwich,5.50
 FOOD-003,food,Chocolate Cake,4.00
 OTH-001,other,Coffee Mug,8.00
 OTH-002,other,Cookie Box,6.50
+bev-003,beverage,Espresso,2.50
+BEV-004,drinks,Green Tea,3.00
+FOOD-004,food,Croissant,-1.50
+OTH-003,other,Loyalty Card
+BEV-005,beverage,Flat White,not-a-number

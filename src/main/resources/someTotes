@@ -7,8 +7,4 @@ package main.java.Guis;
 
 ⬆ 已修改
 
-Ver4
-修改了LoadUtils.java
-修改了Main.java
-新增了Disc...test.java测试
-新增了Load...test.java测试
+新修改：当前使用gui进行的点单会作为新顾客记录到orders.txt中。

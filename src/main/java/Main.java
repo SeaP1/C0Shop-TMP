@@ -3,7 +3,6 @@ import controller.ShopController;
 import pojo.MenuItem;
 import pojo.Orders;
 import utils.LoadUtils;
-
 import java.util.List;
 import java.util.Map;
 
@@ -16,9 +15,10 @@ public class Main {
         System.out.println("or succ: " + order.size());
 
         if (menu.isEmpty()) {
-            System.err.println("No mu files");
+            System.err.println("Failed to load menu: no valid items found.");
             return;
         }
+        // orders may be empty (e.g. first day of business) - that is fine
 
         ShopController shopController = new ShopController(menu, order);
         new ShopGuis(menu, shopController);

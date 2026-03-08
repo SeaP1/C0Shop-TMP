@@ -4,6 +4,7 @@ import pojo.MenuItem;
 import pojo.Orders;
 import service.DiscService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,18 +13,29 @@ public class ShopController {
     private Map<String, MenuItem> menu;
     private List<MenuItem> cur;
     private List<MenuItem> allOrderedItems;
+    private List<Orders> newOrders;   // 本次运行中 GUI 产生的新订单
+    private int nextCustNumber;       // 下一个客户编号
 
     public ShopController(Map<String, MenuItem> menu, List<Orders> existingOrders) {
         this.menu = menu;
         this.cur = new ArrayList<>();
         this.allOrderedItems = new ArrayList<>();
+        this.newOrders = new ArrayList<>();
 
+        int maxCustNum = 0;
         for (Orders order : existingOrders) {
             MenuItem item = menu.get(order.getItemId());
             if (item != null) {
                 allOrderedItems.add(item);
             }
+            // 从 "CUST001" 格式中解析编号
+            String uid = order.getCUserId();
+            if (uid != null && uid.matches("CUST\\d+")) {
+                int num = Integer.parseInt(uid.substring(4));
+                if (num > maxCustNum) maxCustNum = num;
+            }
         }
+        this.nextCustNumber = maxCustNum + 1;
     }
 
     public void addItem(MenuItem item) {
@@ -45,6 +57,15 @@ public class ShopController {
     public double checkout() {
         double finalBill = DiscService.calDisTl(cur);
         allOrderedItems.addAll(cur);
+
+        // 为本次客户生成 Orders 记录，每个 MenuItem 对应一条
+        String customerId = String.format("CUST%03d", nextCustNumber);
+        LocalDateTime now = LocalDateTime.now();
+        for (MenuItem item : cur) {
+            newOrders.add(new Orders(customerId, now, item.getId()));
+        }
+        nextCustNumber++;
+
         cur.clear();
         return finalBill;
     }
@@ -83,5 +104,9 @@ public class ShopController {
 
     public List<MenuItem> getAllOrderedItems() {
         return allOrderedItems;
+    }
+
+    public List<Orders> getNewOrders() {
+        return newOrders;
     }
 }
