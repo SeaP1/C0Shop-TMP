@@ -1,6 +1,9 @@
 package utils;
 
 import exception.InvalidItems;
+import exception.InvalidMenuLineException;
+import exception.InvalidOrderLineException;
+import exception.LoadDataValidator;
 import pojo.MenuItem;
 import pojo.Orders;
 
@@ -11,7 +14,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,14 +71,9 @@ public class LoadUtils {
             if (line.trim().isEmpty()) {
                 continue;
             }
-
             try {
                 String[] parts = line.split(",");
-                if (parts.length != 4) {
-                    System.out.println("Skipping invalid menu line " + lineNo + ": wrong number of fields");
-                    continue;
-                }
-
+                LoadDataValidator.validateMenuLine(parts);
                 String id = parts[0].trim();
                 String category = parts[1].trim();
                 String description = parts[2].trim();
@@ -85,11 +82,10 @@ public class LoadUtils {
                 MenuItem item = new MenuItem(id, description, cost, category);
                 menu.put(id, item);
 
-            } catch (InvalidItems | NumberFormatException e) {
+            } catch (InvalidMenuLineException | InvalidItems | NumberFormatException e) {
                 System.out.println("Skipping invalid menu line " + lineNo + ": " + e.getMessage());
             }
         }
-
         return menu;
     }
 
@@ -100,38 +96,23 @@ public class LoadUtils {
 
         while ((line = br.readLine()) != null) {
             lineNo++;
+
             if (line.trim().isEmpty()) {
                 continue;
             }
 
             try {
                 String[] parts = line.split(",");
-                if (parts.length != 3) {
-                    System.out.println("Skipping invalid order line " + lineNo + ": wrong number of fields");
-                    continue;
-                }
+                LocalDateTime timestamp = LoadDataValidator.validateOrderLine(parts, menu);
 
-                String timestampStr = parts[0].trim();
                 String customerId = parts[1].trim();
                 String itemId = parts[2].trim();
-
-                LocalDateTime timestamp = LocalDateTime.parse(timestampStr);
-
-                if (!itemId.matches("[A-Z]+-\\d{3}")) {
-                    System.out.println("Skipping invalid order line " + lineNo + ": invalid item ID format");
-                    continue;
-                }
-
-                if (!menu.containsKey(itemId)) {
-                    System.out.println("Skipping invalid order line " + lineNo + ": item ID not found in menu");
-                    continue;
-                }
 
                 Orders order = new Orders(customerId, timestamp, itemId);
                 orders.add(order);
 
-            } catch (DateTimeParseException e) {
-                System.out.println("Skipping invalid order line " + lineNo + ": invalid timestamp");
+            } catch (InvalidOrderLineException e) {
+                System.out.println("Skipping invalid order line " + lineNo + ": " + e.getMessage());
             } catch (Exception e) {
                 System.out.println("Skipping invalid order line " + lineNo + ": " + e.getMessage());
             }
