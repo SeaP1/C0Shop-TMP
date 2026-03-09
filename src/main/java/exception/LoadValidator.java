@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 public class LoadValidator {
+    // Error Type and Description
     public static void vM(String[] p) throws InvalidMenuLineException {
         if (p.length != 4) throw new InvalidMenuLineException("wrong fields");
     }

@@ -10,6 +10,7 @@ import utils.LogUtils;
 public class Main {
     public static void main(String[] args) {
         LogUtils.clr();
+        // The .txt file here is located in the resources' folder.
         Map<String, MenuItem> menu = LoadUtils.ldMenu("menu.txt");
         List<Orders> order = LoadUtils.ldOrders("orders.txt", menu);
         LogUtils.w("src/main/resources/log.txt");

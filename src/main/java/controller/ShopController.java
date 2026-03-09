@@ -6,11 +6,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class ShopController {
-    private Map<String, MenuItem> m;
-    private List<MenuItem> c = new ArrayList<>(), all = new ArrayList<>();
-    private List<Orders> nos = new ArrayList<>();
-    private List<CheckOut> chkout = new ArrayList<>();
-    private int nxt = 1;
+    private Map<String, MenuItem> m; // Menu
+    private List<MenuItem> c = new ArrayList<>(), all = new ArrayList<>(); // cart and all record
+    private List<Orders> nos = new ArrayList<>(); // new order
+    private List<CheckOut> chkout = new ArrayList<>(); // Like name Checkout
+    private int nxt = 1; // User id
     public ShopController(Map<String, MenuItem> menu, List<Orders> eos) {
         this.m = menu;
         int max = 0;
@@ -30,25 +30,29 @@ public class ShopController {
     }
 
     public void add(MenuItem i) { if (i != null) c.add(i); }
-    public void rem(int idx) { if (idx >= 0 && idx < c.size()) c.remove(idx); }
+    public void rem(int idx) { if (idx >= 0 && idx < c.size()) c.remove(idx); } // remove
     public double chk() { // <- checkout
 //        double res = DiscService.calDisTl(c);
-        double subtotal = DiscService.calculateSubtotal(c);
+        // Original and discount
+        double subtotal = DiscService.calSubtotal(c);
         double finalcal = DiscService.calDisTl(c);
         String cid = String.format("CUST%03d", nxt++);
         LocalDateTime now = LocalDateTime.now();
+        // save
         chkout.add(new CheckOut(cid, subtotal, finalcal));
         all.addAll(c);
+        // add records
         for (MenuItem i : c) nos.add(new Orders(cid, now, i.getId()));
         c.clear();
         return finalcal;
     }
 
+    // like this name
     public String getBill() {
         if (c.isEmpty()) return "No items in cart.";
         StringBuilder sb = new StringBuilder("Items in current order:\n");
         for (MenuItem i : c) sb.append("- ").append(i.getDescribe()).append(" (£").append(String.format("%.2f", i.getCost())).append(")\n");
-        double s = DiscService.calculateSubtotal(c);
+        double s = DiscService.calSubtotal(c);
         double f = DiscService.calDisTl(c);
         return sb.append("\nSubtotal: £").append(String.format("%.2f", s))
                 .append("\nDiscount: ").append(DiscService.getDiscountDescription(c))

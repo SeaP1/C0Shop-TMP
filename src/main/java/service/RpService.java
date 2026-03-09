@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 public class RpService {
+    // Record orders to accumulate income
     public static double rPT(String f) {
         File file = new File(f);
         if (!file.exists()) return 0.0;
@@ -24,7 +25,7 @@ public class RpService {
     public static String generateReport(Map<String, MenuItem> m, List<MenuItem> os, List<CheckOut> chkout, String file) {
         StringBuilder sb = new StringBuilder("=== Coffee Shop Summary Report ===\n");
         double total = 0;
-        // Map precal O(N*M) -> O(N+M)
+        // Map precal reduce O(N*M) -> O(N+M)
         Map<String, Integer> cnt = new HashMap<>();
         for (MenuItem i : os) {
             cnt.put(i.getId(), cnt.getOrDefault(i.getId(), 0) + 1);
@@ -41,7 +42,7 @@ public class RpService {
                     .append(", Description: ").append(mi.getDescribe())
                     .append(", Ordered: ").append(n).append(" times\n");
         }
-        return sb.append(String.format("\nTotal cost: £%.2f\n", total)).toString();
+        return sb.append(String.format("\nTotal income: £%.2f\n", total)).toString();
     }
 
     public static void wR(String r, String f) {
@@ -51,7 +52,6 @@ public class RpService {
 
     public static void aO(List<Orders> os, String f) {
         if (os == null || os.isEmpty()) return;
-        // 使用 PrintWriter 可以直接 println，代码最减
         try (PrintWriter p = new PrintWriter(new FileWriter(f, true))) {
             for (Orders o : os)
                 p.println(o.getTimestamp() + "," + o.getCUserId() + "," + o.getItemId());

@@ -4,12 +4,12 @@ import pojo.MenuItem;
 import java.util.List;
 
 public class DiscService {
-    public static double calculateSubtotal(List<MenuItem> items) {
+    public static double calSubtotal(List<MenuItem> items) {
         double s = 0;
         for (MenuItem i : items) s += i.getCost();
         return s;
     }
-
+    // cnt
     private static int[] getC(List<MenuItem> items) {
         int[] c = new int[3];
         for (MenuItem i : items) {
@@ -20,18 +20,17 @@ public class DiscService {
         }
         return c;
     }
-
+    // like func name
     public static double calDisTl(List<MenuItem> items) {
-        double s = calculateSubtotal(items), res = s;
+        double s = calSubtotal(items), res = s;
         int[] c = getC(items);
-
         if (c[0] >= 1 && c[1] >= 2) res *= 0.8;
         if (s >= 20 && c[2] >= 1) res -= 2.0;
         return res;
     }
-
+    // Check up
     public static String getDiscountDescription(List<MenuItem> items) {
-        double s = calculateSubtotal(items);
+        double s = calSubtotal(items);
         int[] c = getC(items);
         String r = "";
         if (c[0] >= 1 && c[1] >= 2) r = "20% off for 1 beverage + 2 food items";

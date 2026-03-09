@@ -15,11 +15,9 @@ public class DiscServiceTest {
         return new MenuItem(id, desc, cost, category);
     }
 
-    // --- calculateSubtotal ---
-
     @Test
     public void subtotalOfEmptyListIsZero() {
-        assertEquals(0.0, DiscService.calculateSubtotal(new ArrayList<>()), 0.001);
+        assertEquals(0.0, DiscService.calSubtotal(new ArrayList<>()), 0.001);
     }
 
     @Test
@@ -28,14 +26,11 @@ public class DiscServiceTest {
                 item("BEV-001", "Americano", 3.50, "beverage"),
                 item("FOOD-001", "Blueberry Muffin", 2.80, "food")
         );
-        assertEquals(6.30, DiscService.calculateSubtotal(items), 0.001);
+        assertEquals(6.30, DiscService.calSubtotal(items), 0.001);
     }
-
-    // --- calDisTl: no discount ---
 
     @Test
     public void noDiscountWhenNeitherRuleApplies() throws InvalidItemsException {
-        // 1 beverage, no food -> Rule 1 not met; subtotal < 20 -> Rule 2 not met
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage")
         );
@@ -44,7 +39,6 @@ public class DiscServiceTest {
 
     @Test
     public void noDiscountWhenOnlyOneFoodWithBeverage() throws InvalidItemsException {
-        // 1 beverage + 1 food is not enough for Rule 1 (needs 2 food)
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage"),
                 item("FOOD-001", "Blueberry Muffin", 2.80, "food")
@@ -54,7 +48,6 @@ public class DiscServiceTest {
 
     @Test
     public void noDiscountWhenSubtotalBelow20WithOtherItem() throws InvalidItemsException {
-        // other item present but subtotal < 20 -> Rule 2 not met
         List<MenuItem> items = List.of(
                 item("OTH-001", "Coffee Mug", 8.00, "other"),
                 item("FOOD-001", "Blueberry Muffin", 2.80, "food")

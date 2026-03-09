@@ -24,14 +24,17 @@ public class ShopGuis extends JFrame {
         setSize(700, 500);
         setLayout(new BorderLayout());
         JPanel p1 = new JPanel();
+        // set menu
         JComboBox<MenuItem> cb = new JComboBox<>(m.values().toArray(new MenuItem[0]));
         JButton bA = new JButton("Add");
         p1.add(new JLabel("Menu:")); p1.add(cb); p1.add(bA);
         add(p1, "North");
+        // cart and bills
         ba.setEditable(false);
         JSplitPane sp = new JSplitPane(1, new JScrollPane(lst), new JScrollPane(ba));
         sp.setDividerLocation(300);
         add(sp, "Center");
+        // explain discount rules
         JPanel p2 = new JPanel(new BorderLayout());
         JTextArea ra = new JTextArea(" Rule 1: 1+ Bev & 2+ Food -> 20% OFF\n Rule 2: >= £20 & 1+ Other -> -£2");
         ra.setEditable(false); ra.setBackground(new Color(255, 255, 200));
@@ -41,6 +44,7 @@ public class ShopGuis extends JFrame {
         p3.add(bR); p3.add(bC);
         p2.add(p3, "South");
         add(p2, "South");
+        // Listening
         bA.addActionListener(e -> { sc.add((MenuItem)cb.getSelectedItem()); upd(); });
         bR.addActionListener(e -> {
             int i = lst.getSelectedIndex();
@@ -54,6 +58,7 @@ public class ShopGuis extends JFrame {
             JOptionPane.showMessageDialog(this, new JLabel(res));
             sc.chk(); upd();
         });
+        // Auto generate report
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 RpService.wR(RpService.generateReport(sc.getM(), sc.getA(), sc.getChkout(), "report.txt"), "report.txt");
@@ -63,6 +68,7 @@ public class ShopGuis extends JFrame {
         setDefaultCloseOperation(3);
         setVisible(true);
     }
+    // update bills and cart
     private void upd() {
         mdl.clear();
         for (MenuItem i : sc.getC()) mdl.addElement(i);

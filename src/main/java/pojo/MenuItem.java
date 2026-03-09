@@ -13,6 +13,7 @@ public class MenuItem {
     private static final Set<String> VALID_CATEGORIES =
             Set.of("beverage", "food", "other");
 
+    // filter with RE
     public MenuItem(String id, String describe, double cost, String category) throws InvalidItemsException {
         if (id == null || !id.matches("[A-Z]+-\\d{3}")) { throw new InvalidItemsException("IiPb: " + id); }
         if (describe == null || describe.trim().isEmpty()) { throw new InvalidItemsException("Depb"); }
