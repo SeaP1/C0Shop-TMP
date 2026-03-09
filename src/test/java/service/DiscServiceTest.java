@@ -1,6 +1,6 @@
 package service;
 
-import exception.InvalidItems;
+import exception.InvalidItemsException;
 import org.junit.jupiter.api.Test;
 import pojo.MenuItem;
 
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DiscServiceTest {
 
-    private MenuItem item(String id, String desc, double cost, String category) throws InvalidItems {
+    private MenuItem item(String id, String desc, double cost, String category) throws InvalidItemsException {
         return new MenuItem(id, desc, cost, category);
     }
 
@@ -23,7 +23,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    public void subtotalSumsAllItems() throws InvalidItems {
+    public void subtotalSumsAllItems() throws InvalidItemsException {
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage"),
                 item("FOOD-001", "Blueberry Muffin", 2.80, "food")
@@ -34,7 +34,7 @@ public class DiscServiceTest {
     // --- calDisTl: no discount ---
 
     @Test
-    public void noDiscountWhenNeitherRuleApplies() throws InvalidItems {
+    public void noDiscountWhenNeitherRuleApplies() throws InvalidItemsException {
         // 1 beverage, no food -> Rule 1 not met; subtotal < 20 -> Rule 2 not met
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage")
@@ -43,7 +43,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    public void noDiscountWhenOnlyOneFoodWithBeverage() throws InvalidItems {
+    public void noDiscountWhenOnlyOneFoodWithBeverage() throws InvalidItemsException {
         // 1 beverage + 1 food is not enough for Rule 1 (needs 2 food)
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage"),
@@ -53,7 +53,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    public void noDiscountWhenSubtotalBelow20WithOtherItem() throws InvalidItems {
+    public void noDiscountWhenSubtotalBelow20WithOtherItem() throws InvalidItemsException {
         // other item present but subtotal < 20 -> Rule 2 not met
         List<MenuItem> items = List.of(
                 item("OTH-001", "Coffee Mug", 8.00, "other"),
@@ -66,7 +66,7 @@ public class DiscServiceTest {
     // --- calDisTl: Rule 1 only (20% off) ---
 
     @Test
-    public void rule1AppliesWhenOneBeverageAndTwoFood() throws InvalidItems {
+    public void rule1AppliesWhenOneBeverageAndTwoFood() throws InvalidItemsException {
         // 1 beverage + 2 food, subtotal < 20 -> only Rule 1
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage"),
@@ -78,7 +78,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    public void rule1AppliesWithMultipleBeveragesAndTwoFood() throws InvalidItems {
+    public void rule1AppliesWithMultipleBeveragesAndTwoFood() throws InvalidItemsException {
         // Rule 1 requires >= 1 beverage; more beverages still qualify
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage"),
@@ -93,7 +93,7 @@ public class DiscServiceTest {
     // --- calDisTl: Rule 2 only (£2 off) ---
 
     @Test
-    public void rule2AppliesWhenSubtotalExactly20WithOtherItem_boundary() throws InvalidItems {
+    public void rule2AppliesWhenSubtotalExactly20WithOtherItem_boundary() throws InvalidItemsException {
         // Boundary: subtotal exactly £20.00 should still trigger Rule 2
         List<MenuItem> items = List.of(
                 item("FOOD-001", "Burger", 10.0, "food"),
@@ -104,7 +104,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    public void rule2AppliesWhenSubtotalAbove20WithOtherItem() throws InvalidItems {
+    public void rule2AppliesWhenSubtotalAbove20WithOtherItem() throws InvalidItemsException {
         // No beverage -> Rule 1 not met; subtotal > 20 + other -> Rule 2
         List<MenuItem> items = List.of(
                 item("FOOD-001", "Blueberry Muffin", 2.80, "food"),
@@ -117,7 +117,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    public void rule2DoesNotApplyWithoutOtherItem() throws InvalidItems {
+    public void rule2DoesNotApplyWithoutOtherItem() throws InvalidItemsException {
         // subtotal >= 20 but no other item -> Rule 2 not met
         List<MenuItem> items = List.of(
                 item("FOOD-001", "Blueberry Muffin", 2.80, "food"),
@@ -133,7 +133,7 @@ public class DiscServiceTest {
     // --- calDisTl: Both rules apply simultaneously ---
 
     @Test
-    public void bothRulesApplySimultaneously() throws InvalidItems {
+    public void bothRulesApplySimultaneously() throws InvalidItemsException {
         // 1 beverage + 2 food + 1 other, subtotal >= 20 -> both rules apply
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage"),
@@ -150,7 +150,7 @@ public class DiscServiceTest {
     // --- getDiscountDescription ---
 
     @Test
-    public void descriptionNoDiscount() throws InvalidItems {
+    public void descriptionNoDiscount() throws InvalidItemsException {
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage")
         );
@@ -158,7 +158,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    public void descriptionRule1Only() throws InvalidItems {
+    public void descriptionRule1Only() throws InvalidItemsException {
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage"),
                 item("FOOD-001", "Blueberry Muffin", 2.80, "food"),
@@ -169,7 +169,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    public void descriptionRule2Only() throws InvalidItems {
+    public void descriptionRule2Only() throws InvalidItemsException {
         List<MenuItem> items = List.of(
                 item("FOOD-001", "Blueberry Muffin", 2.80, "food"),
                 item("FOOD-002", "Ham Sandwich", 5.50, "food"),
@@ -181,7 +181,7 @@ public class DiscServiceTest {
     }
 
     @Test
-    public void descriptionBothRules() throws InvalidItems {
+    public void descriptionBothRules() throws InvalidItemsException {
         List<MenuItem> items = List.of(
                 item("BEV-001", "Americano", 3.50, "beverage"),
                 item("FOOD-002", "Ham Sandwich", 5.50, "food"),

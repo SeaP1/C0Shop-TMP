@@ -1,123 +1,56 @@
 package utils;
 
-import exception.InvalidItems;
-import exception.InvalidMenuLineException;
-import exception.InvalidOrderLineException;
-import exception.LoadDataValidator;
-import pojo.MenuItem;
-import pojo.Orders;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import exception.*;
+import pojo.*;
+import java.io.*;
+import java.util.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class LoadUtils {
-
-    private static BufferedReader getResourceReader(String resourceName) {
-        InputStream is = LoadUtils.class.getClassLoader().getResourceAsStream(resourceName);
-        if (is == null) {
-            throw new RuntimeException("Resource not found: " + resourceName);
-        }
-        return new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+    private static BufferedReader getBR(String s, boolean f) throws Exception {
+        InputStream is = f ? new FileInputStream(s) : LoadUtils.class.getClassLoader().getResourceAsStream(s);
+        if (is == null) throw new RuntimeException("Missing: " + s);
+        return new BufferedReader(new InputStreamReader(is, "UTF-8"));
     }
-
-    public static Map<String, MenuItem> ldMenu(String resourceName) {
-        try (BufferedReader br = getResourceReader(resourceName)) {
-            return readMenu(br);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read menu resource: " + resourceName, e);
-        }
-    }
-
-    public static List<Orders> ldOrders(String resourceName, Map<String, MenuItem> menu) {
-        try (BufferedReader br = getResourceReader(resourceName)) {
-            return readOrders(br, menu);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read orders resource: " + resourceName, e);
-        }
-    }
-
-    public static Map<String, MenuItem> ldMenuFromFile(String filePath) {
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            return readMenu(br);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read menu file: " + filePath, e);
-        }
-    }
-
-    public static List<Orders> ldOrdersFromFile(String filePath, Map<String, MenuItem> menu) {
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            return readOrders(br, menu);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read orders file: " + filePath, e);
-        }
-    }
-
-    private static Map<String, MenuItem> readMenu(BufferedReader br) throws IOException {
-        Map<String, MenuItem> menu = new HashMap<>();
-        String line;
-        int lineNo = 0;
-
-        while ((line = br.readLine()) != null) {
-            lineNo++;
-            if (line.trim().isEmpty()) {
-                continue;
+    public static Map<String, MenuItem> ldMenu(String s) { return rM(s, false); }
+    public static Map<String, MenuItem> ldMenuFromFile(String s) { return rM(s, true); }
+    public static List<Orders> ldOrders(String s, Map<String, MenuItem> m) { return rO(s, m, false); }
+    public static List<Orders> ldOrdersFromFile(String s, Map<String, MenuItem> m) { return rO(s, m, true); }
+    private static Map<String, MenuItem> rM(String s, boolean f) {
+        Map<String, MenuItem> m = new HashMap<>();
+        try (BufferedReader br = getBR(s, f)) {
+            String l; int n = 0;
+            while ((l = br.readLine()) != null) {
+                n++; if (l.trim().isEmpty()) continue;
+                try {
+                    String[] p = l.split(",");
+                    LoadValidator.vM(p);
+                    m.put(p[0].trim(), new MenuItem(p[0].trim(), p[2].trim(), Double.parseDouble(p[3].trim()), p[1].trim()));
+                } catch (InvalidMenuLineException | InvalidItemsException | NumberFormatException e) {
+                    System.out.println("M_Err L" + n + ": " + e.getMessage());
+                }
             }
-            try {
-                String[] parts = line.split(",");
-                LoadDataValidator.validateMenuLine(parts);
-                String id = parts[0].trim();
-                String category = parts[1].trim();
-                String description = parts[2].trim();
-                double cost = Double.parseDouble(parts[3].trim());
-
-                MenuItem item = new MenuItem(id, description, cost, category);
-                menu.put(id, item);
-
-            } catch (InvalidMenuLineException | InvalidItems | NumberFormatException e) {
-                System.out.println("Skipping invalid menu line " + lineNo + ": " + e.getMessage());
-            }
-        }
-        return menu;
+        } catch (Exception e) { throw new RuntimeException(e); }
+        return m;
     }
 
-    private static List<Orders> readOrders(BufferedReader br, Map<String, MenuItem> menu) throws IOException {
-        List<Orders> orders = new ArrayList<>();
-        String line;
-        int lineNo = 0;
-
-        while ((line = br.readLine()) != null) {
-            lineNo++;
-
-            if (line.trim().isEmpty()) {
-                continue;
+    private static List<Orders> rO(String s, Map<String, MenuItem> m, boolean f) {
+        List<Orders> os = new ArrayList<>();
+        try (BufferedReader br = getBR(s, f)) {
+            String l; int n = 0;
+            while ((l = br.readLine()) != null) {
+                n++; if (l.trim().isEmpty()) continue;
+                try {
+                    String[] p = l.split(",");
+                    LocalDateTime t = LoadValidator.vO(p, m);
+                    os.add(new Orders(p[1].trim(), t, p[2].trim()));
+                } catch (InvalidOrderLineException e) {
+                    System.out.println("O_Err L" + n + ": " + e.getMessage());
+                } catch (Exception e) {
+                    System.out.println("O_SysErr L" + n + ": " + e.getMessage());
+                }
             }
-
-            try {
-                String[] parts = line.split(",");
-                LocalDateTime timestamp = LoadDataValidator.validateOrderLine(parts, menu);
-
-                String customerId = parts[1].trim();
-                String itemId = parts[2].trim();
-
-                Orders order = new Orders(customerId, timestamp, itemId);
-                orders.add(order);
-
-            } catch (InvalidOrderLineException e) {
-                System.out.println("Skipping invalid order line " + lineNo + ": " + e.getMessage());
-            } catch (Exception e) {
-                System.out.println("Skipping invalid order line " + lineNo + ": " + e.getMessage());
-            }
-        }
-
-        return orders;
+        } catch (Exception e) { throw new RuntimeException(e); }
+        return os;
     }
 }

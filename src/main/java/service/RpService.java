@@ -1,63 +1,40 @@
 package service;
-import pojo.MenuItem;
-import pojo.Orders;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import pojo.*;
+import java.io.*;
+import java.util.*;
 
 public class RpService {
 
-    public static String generateReport(Map<String, MenuItem> menu, List<MenuItem> allOrderedItems) {
-        StringBuilder sb = new StringBuilder();
-        double totalCost = 0.0;
-
-        sb.append("=== Coffee Shop Summary Report ===\n");
-
-        for (String id : menu.keySet()) {
-            MenuItem menuItem = menu.get(id);
-
-            int count = 0;
-            for (MenuItem orderedItem : allOrderedItems) {
-                if (orderedItem.getId().equals(id)) {
-                    count++;
-                    totalCost += orderedItem.getCost();
-                }
-            }
-
-            sb.append("Item ID: ").append(menuItem.getId())
-                    .append(", Description: ").append(menuItem.getDescribe())
-                    .append(", Ordered: ").append(count).append(" times\n");
+    public static String generateReport(Map<String, MenuItem> m, List<MenuItem> os) {
+        StringBuilder sb = new StringBuilder("=== Coffee Shop Summary Report ===\n");
+        double total = 0;
+        // Map预处理 降低复杂度 O(N*M) -> O(N+M)
+        Map<String, Integer> cnt = new HashMap<>();
+        for (MenuItem i : os) {
+            cnt.put(i.getId(), cnt.getOrDefault(i.getId(), 0) + 1);
+            total += i.getCost();
         }
 
-        sb.append(String.format("%nTotal cost of all orders: £%.2f%n", totalCost));
-
-        return sb.toString();
+        for (MenuItem mi : m.values()) {
+            int n = cnt.getOrDefault(mi.getId(), 0);
+            sb.append("Item ID: ").append(mi.getId())
+                    .append(", Description: ").append(mi.getDescribe())
+                    .append(", Ordered: ").append(n).append(" times\n");
+        }
+        return sb.append(String.format("\nTotal cost: £%.2f\n", total)).toString();
     }
 
-    public static void writeReportToFile(String report, String fileName) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            writer.write(report);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void wR(String r, String f) {
+        try (FileWriter w = new FileWriter(f)) { w.write(r); }
+        catch (Exception e) { e.printStackTrace(); }
     }
 
-    /**
-     * 将新产生的订单追加写入 orders.txt（资源目录中的文件）
-     * 格式：timestamp,customerId,itemId
-     */
-    public static void appendOrdersToFile(List<Orders> newOrders, String filePath) {
-        if (newOrders == null || newOrders.isEmpty()) return;
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-            for (Orders order : newOrders) {
-                writer.write(order.getTimestamp() + "," + order.getCUserId() + "," + order.getItemId());
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void aO(List<Orders> os, String f) {
+        if (os == null || os.isEmpty()) return;
+        // 使用 PrintWriter 可以直接 println，代码最减
+        try (PrintWriter p = new PrintWriter(new FileWriter(f, true))) {
+            for (Orders o : os)
+                p.println(o.getTimestamp() + "," + o.getCUserId() + "," + o.getItemId());
+        } catch (Exception e) { e.printStackTrace(); }
     }
 }

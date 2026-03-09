@@ -1,87 +1,41 @@
 package service;
 
 import pojo.MenuItem;
-
 import java.util.List;
 
 public class DiscService {
     public static double calculateSubtotal(List<MenuItem> items) {
-        double total = 0.0;
-        for (MenuItem item : items) {
-            total += item.getCost();
+        double s = 0;
+        for (MenuItem i : items) s += i.getCost();
+        return s;
+    }
+
+    private static int[] getC(List<MenuItem> items) {
+        int[] c = new int[3];
+        for (MenuItem i : items) {
+            String t = i.getCategory().toLowerCase();
+            if (t.equals("beverage")) c[0]++;
+            else if (t.equals("food")) c[1]++;
+            else if (t.equals("other")) c[2]++;
         }
-        return total;
+        return c;
     }
 
     public static double calDisTl(List<MenuItem> items) {
-        double subtotal = calculateSubtotal(items);
+        double s = calculateSubtotal(items), res = s;
+        int[] c = getC(items);
 
-        int beverageCount = 0;
-        int foodCount = 0;
-        int otherCount = 0;
-
-        for (MenuItem item : items) {
-            String category = item.getCategory().toLowerCase();
-            if (category.equals("beverage")) {
-                beverageCount++;
-            } else if (category.equals("food")) {
-                foodCount++;
-            } else if (category.equals("other")) {
-                otherCount++;
-            }
-        }
-
-        double finalTotal = subtotal;
-
-        if (beverageCount >= 1 && foodCount >= 2) {
-            finalTotal = finalTotal * 0.8;
-        }
-
-        if (subtotal >= 20 && otherCount >= 1) {
-            finalTotal = finalTotal - 2.0;
-        }
-
-        return finalTotal;
+        if (c[0] >= 1 && c[1] >= 2) res *= 0.8;
+        if (s >= 20 && c[2] >= 1) res -= 2.0;
+        return res;
     }
 
     public static String getDiscountDescription(List<MenuItem> items) {
-        double subtotal = calculateSubtotal(items);
-
-        int beverageCount = 0;
-        int foodCount = 0;
-        int otherCount = 0;
-
-        for (MenuItem item : items) {
-            String category = item.getCategory().toLowerCase();
-            if (category.equals("beverage")) {
-                beverageCount++;
-            } else if (category.equals("food")) {
-                foodCount++;
-            } else if (category.equals("other")) {
-                otherCount++;
-            }
-        }
-
-        StringBuilder sb = new StringBuilder();
-        boolean hasDiscount = false;
-
-        if (beverageCount >= 1 && foodCount >= 2) {
-            sb.append("20% off for 1 beverage + 2 food items");
-            hasDiscount = true;
-        }
-
-        if (subtotal >= 20 && otherCount >= 1) {
-            if (hasDiscount) {
-                sb.append("; ");
-            }
-            sb.append("£2 off for subtotal >= £20 with 1 other item");
-            hasDiscount = true;
-        }
-
-        if (!hasDiscount) {
-            return "No discount applied";
-        }
-
-        return sb.toString();
+        double s = calculateSubtotal(items);
+        int[] c = getC(items);
+        String r = "";
+        if (c[0] >= 1 && c[1] >= 2) r = "20% off for 1 beverage + 2 food items";
+        if (s >= 20 && c[2] >= 1) r += (r.isEmpty() ? "" : "; ") + "£2 off for subtotal >= £20 with 1 other item";
+        return r.isEmpty() ? "No discount applied" : r;
     }
 }

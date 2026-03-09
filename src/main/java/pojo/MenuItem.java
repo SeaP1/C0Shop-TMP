@@ -1,6 +1,6 @@
 package pojo;
 
-import exception.InvalidItems;
+import exception.InvalidItemsException;
 
 import java.util.Set;
 
@@ -13,23 +13,11 @@ public class MenuItem {
     private static final Set<String> VALID_CATEGORIES =
             Set.of("beverage", "food", "other");
 
-    public MenuItem(String id, String describe, double cost, String category) throws InvalidItems {
-        if (id == null || !id.matches("[A-Z]+-\\d{3}")) {
-            throw new InvalidItems("Invalid item id: " + id);
-        }
-
-        if (describe == null || describe.trim().isEmpty()) {
-            throw new InvalidItems("Description cannot be empty");
-        }
-
-        if (cost <= 0) {
-            throw new InvalidItems("Cost must be greater than 0");
-        }
-
-        if (category == null || !VALID_CATEGORIES.contains(category.toLowerCase())) {
-            throw new InvalidItems("Invalid category: " + category);
-        }
-
+    public MenuItem(String id, String describe, double cost, String category) throws InvalidItemsException {
+        if (id == null || !id.matches("[A-Z]+-\\d{3}")) { throw new InvalidItemsException("IiPb: " + id); }
+        if (describe == null || describe.trim().isEmpty()) { throw new InvalidItemsException("Depb"); }
+        if (cost <= 0) { throw new InvalidItemsException("Must bigger than 0"); }
+        if (category == null || !VALID_CATEGORIES.contains(category.toLowerCase())) { throw new InvalidItemsException("Ic: " + category); }
         this.id = id;
         this.describe = describe;
         this.cost = cost;
