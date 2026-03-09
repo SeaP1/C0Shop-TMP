@@ -27,7 +27,7 @@ public class LoadUtils {
                     LoadValidator.vM(p);
                     m.put(p[0].trim(), new MenuItem(p[0].trim(), p[2].trim(), Double.parseDouble(p[3].trim()), p[1].trim()));
                 } catch (InvalidMenuLineException | InvalidItemsException | NumberFormatException e) {
-                    System.out.println("M_Err L" + n + ": " + e.getMessage());
+                    LogUtils.add("M_Err L" + n + ": " + e.getMessage());
                 }
             }
         } catch (Exception e) { throw new RuntimeException(e); }
@@ -45,9 +45,9 @@ public class LoadUtils {
                     LocalDateTime t = LoadValidator.vO(p, m);
                     os.add(new Orders(p[1].trim(), t, p[2].trim()));
                 } catch (InvalidOrderLineException e) {
-                    System.out.println("O_Err L" + n + ": " + e.getMessage());
+                    LogUtils.add("O_Err L" + n + ": " + e.getMessage());
                 } catch (Exception e) {
-                    System.out.println("O_SysErr L" + n + ": " + e.getMessage());
+                    LogUtils.add("O_SysErr L" + n + ": " + e.getMessage());
                 }
             }
         } catch (Exception e) { throw new RuntimeException(e); }

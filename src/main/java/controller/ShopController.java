@@ -9,6 +9,7 @@ public class ShopController {
     private Map<String, MenuItem> m;
     private List<MenuItem> c = new ArrayList<>(), all = new ArrayList<>();
     private List<Orders> nos = new ArrayList<>();
+    private List<CheckOut> chkout = new ArrayList<>();
     private int nxt = 1;
     public ShopController(Map<String, MenuItem> menu, List<Orders> eos) {
         this.m = menu;
@@ -31,13 +32,16 @@ public class ShopController {
     public void add(MenuItem i) { if (i != null) c.add(i); }
     public void rem(int idx) { if (idx >= 0 && idx < c.size()) c.remove(idx); }
     public double chk() { // <- checkout
-        double res = DiscService.calDisTl(c);
-        all.addAll(c);
+//        double res = DiscService.calDisTl(c);
+        double subtotal = DiscService.calculateSubtotal(c);
+        double finalcal = DiscService.calDisTl(c);
         String cid = String.format("CUST%03d", nxt++);
         LocalDateTime now = LocalDateTime.now();
+        chkout.add(new CheckOut(cid, subtotal, finalcal));
+        all.addAll(c);
         for (MenuItem i : c) nos.add(new Orders(cid, now, i.getId()));
         c.clear();
-        return res;
+        return finalcal;
     }
 
     public String getBill() {
@@ -55,4 +59,5 @@ public class ShopController {
     public List<MenuItem> getC() { return c; }
     public List<MenuItem> getA() { return all; }
     public List<Orders> getN() { return nos; }
+    public List<CheckOut> getChkout() { return chkout; }
 }

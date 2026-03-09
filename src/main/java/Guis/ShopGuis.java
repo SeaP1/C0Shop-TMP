@@ -56,7 +56,7 @@ public class ShopGuis extends JFrame {
         });
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                RpService.wR(RpService.generateReport(sc.getM(), sc.getA()), "report.txt");
+                RpService.wR(RpService.generateReport(sc.getM(), sc.getA(), sc.getChkout(), "report.txt"), "report.txt");
                 RpService.aO(sc.getN(), "src/main/resources/orders.txt");
             }
         });

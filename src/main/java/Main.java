@@ -5,11 +5,14 @@ import pojo.Orders;
 import utils.LoadUtils;
 import java.util.List;
 import java.util.Map;
+import utils.LogUtils;
 
 public class Main {
     public static void main(String[] args) {
+        LogUtils.clr();
         Map<String, MenuItem> menu = LoadUtils.ldMenu("menu.txt");
         List<Orders> order = LoadUtils.ldOrders("orders.txt", menu);
+        LogUtils.w("src/main/resources/log.txt");
         System.out.println("mu succ: " + menu.size());
         System.out.println("or succ: " + order.size());
         if (menu.isEmpty()) {
